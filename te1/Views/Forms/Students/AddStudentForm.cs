@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using te1.Models;
 
-namespace te1
+namespace te1.Views.Forms.Students
 {
     public partial class AddStudentForm : Form
     {
-        public Models.Student Result { get; private set; } = new Models.Student();
+        public Student Result { get; private set; } = new Student();
 
         public AddStudentForm()
         {
             InitializeComponent();
 
             btnOk.Click += btnOk_Click;
-            btnCancel.Click += (s, e) => DialogResult = DialogResult.Cancel;
+            btnCancel.Click += (_, __) => DialogResult = DialogResult.Cancel;
         }
 
         private void btnOk_Click(object? sender, EventArgs e)

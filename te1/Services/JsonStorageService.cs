@@ -2,11 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Windows.Forms;
+using te1.Data;
 
-namespace te1
+namespace te1.Services
 {
-    public static class JsonStorage
+    public static class JsonStorageService
     {
         private static readonly JsonSerializerOptions Options = new()
         {
@@ -19,10 +19,7 @@ namespace te1
             {
                 Students = DataStore.Students.ToList(),
                 Teachers = DataStore.Teachers.ToList(),
-                Classes = DataStore.Classes.ToList(),
-                NextStudentId = DataStore.NextStudentId,
-                NextTeacherId = DataStore.NextTeacherId,
-                NextClassId = DataStore.NextClassId
+                Classes = DataStore.Classes.ToList()
             };
 
             var json = JsonSerializer.Serialize(data, Options);
@@ -37,20 +34,20 @@ namespace te1
             var json = File.ReadAllText(filePath);
             var data = JsonSerializer.Deserialize<AppData>(json, Options);
 
-            if (data == null) throw new Exception("JSON không hợp lệ hoặc rỗng");
+            if (data == null)
+                throw new Exception("JSON không hợp lệ hoặc rỗng");
 
             DataStore.Students.Clear();
-            foreach (var s in data.Students) DataStore.Students.Add(s);
+            foreach (var s in data.Students ?? Enumerable.Empty<te1.Models.Student>())
+                DataStore.Students.Add(s);
 
             DataStore.Teachers.Clear();
-            foreach (var t in data.Teachers) DataStore.Teachers.Add(t);
+            foreach (var t in data.Teachers ?? Enumerable.Empty<te1.Models.Teacher>())
+                DataStore.Teachers.Add(t);
 
             DataStore.Classes.Clear();
-            foreach (var c in data.Classes) DataStore.Classes.Add(c);
-
-            DataStore.NextStudentId = data.NextStudentId;
-            DataStore.NextTeacherId = data.NextTeacherId;
-            DataStore.NextClassId = data.NextClassId;
+            foreach (var c in data.Classes ?? Enumerable.Empty<te1.Models.ClassRoom>())
+                DataStore.Classes.Add(c);
         }
     }
 }

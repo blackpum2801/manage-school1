@@ -1,6 +1,6 @@
-﻿namespace te1
+﻿namespace te1.Views.Forms.Teachers
 {
-    partial class AddTeacherForm
+    partial class EditTeacherForm
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -29,33 +29,37 @@
             txtSalary = new TextBox();
 
             SuspendLayout();
-
             lblName.Text = "Name";
             lblName.Location = new Point(20, 25);
+            lblName.AutoSize = true;
 
             txtName.Location = new Point(140, 22);
             txtName.Width = 250;
 
             lblEmail.Text = "Email";
             lblEmail.Location = new Point(20, 65);
+            lblEmail.AutoSize = true;
 
             txtEmail.Location = new Point(140, 62);
             txtEmail.Width = 250;
 
             lblTeacherCode.Text = "Teacher Code";
             lblTeacherCode.Location = new Point(20, 105);
+            lblTeacherCode.AutoSize = true;
 
             txtTeacherCode.Location = new Point(140, 102);
             txtTeacherCode.Width = 250;
 
             lblDepartment.Text = "Department";
             lblDepartment.Location = new Point(20, 145);
+            lblDepartment.AutoSize = true;
 
             txtDepartment.Location = new Point(140, 142);
             txtDepartment.Width = 250;
 
             lblSalary.Text = "Salary";
             lblSalary.Location = new Point(20, 185);
+            lblSalary.AutoSize = true;
 
             txtSalary.Location = new Point(140, 182);
             txtSalary.Width = 250;
@@ -77,8 +81,11 @@
             });
 
             ClientSize = new Size(420, 290);
-            Text = "Add Teacher";
+            Text = "Edit Teacher";
+            Name = "EditTeacherForm";
+
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private Button btnOk;

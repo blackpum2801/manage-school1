@@ -1,4 +1,4 @@
-﻿namespace te1
+﻿namespace te1.Views.Pages
 {
     partial class StudentPage
     {

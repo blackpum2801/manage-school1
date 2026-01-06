@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using te1.Models;
 
-namespace te1
+namespace te1.Views.Forms.Students
 {
     public partial class EditStudentForm : Form
     {

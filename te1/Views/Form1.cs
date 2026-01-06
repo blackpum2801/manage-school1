@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using te1.Data;
+using te1.Services;
+using te1.Views.Pages;
 
 namespace te1
 {
@@ -70,7 +73,7 @@ namespace te1
 
             if (sfd.ShowDialog(this) != DialogResult.OK) return;
 
-            JsonStorage.ExportToJson(sfd.FileName);
+            JsonStorageService.ExportToJson(sfd.FileName);
             MessageBox.Show("Export JSON thành công!");
         }
 
@@ -87,7 +90,7 @@ namespace te1
 
             if (ofd.ShowDialog(this) != DialogResult.OK) return;
 
-            JsonStorage.ImportFromJson(ofd.FileName);
+            JsonStorageService.ImportFromJson(ofd.FileName);
             MessageBox.Show("Import JSON thành công!");
             LoadPage(new StudentPage());
         }

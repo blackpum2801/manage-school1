@@ -1,17 +1,23 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using te1.Models;
 
-namespace te1
+namespace te1.Data
 {
     public static class DataStore
     {
-        public static BindingList<Student> Students { get; set; } = new();
-        public static BindingList<Teacher> Teachers { get; set; } = new();
-        public static BindingList<ClassRoom> Classes { get; set; } = new();
+        public static BindingList<Student> Students { get; } = new();
+        public static BindingList<Teacher> Teachers { get; } = new();
+        public static BindingList<ClassRoom> Classes { get; } = new();
 
-        public static int NextStudentId = 1;
-        public static int NextTeacherId = 1;
-        public static int NextClassId = 1;
+        public static int NextStudentId()
+            => Students.Any() ? Students.Max(x => x.Id) + 1 : 1;
+
+        public static int NextTeacherId()
+            => Teachers.Any() ? Teachers.Max(x => x.Id) + 1 : 1;
+
+        public static int NextClassId()
+            => Classes.Any() ? Classes.Max(x => x.Id) + 1 : 1;
 
         public static void Seed()
         {
@@ -19,7 +25,7 @@ namespace te1
 
             Teachers.Add(new Teacher
             {
-                Id = NextTeacherId++,
+                Id = 1,
                 Name = "Mr John",
                 Email = "john@gmail.com",
                 TeacherCode = "T001",
@@ -29,7 +35,7 @@ namespace te1
 
             Teachers.Add(new Teacher
             {
-                Id = NextTeacherId++,
+                Id = 2,
                 Name = "Ms Anna",
                 Email = "anna@gmail.com",
                 TeacherCode = "T002",
@@ -37,12 +43,12 @@ namespace te1
                 Salary = 1200
             });
 
-            Classes.Add(new ClassRoom { Id = NextClassId++, Name = "10A1" });
-            Classes.Add(new ClassRoom { Id = NextClassId++, Name = "10A2" });
+            Classes.Add(new ClassRoom { Id = 1, Name = "10A1" });
+            Classes.Add(new ClassRoom { Id = 2, Name = "10A2" });
 
             var maria = new Student
             {
-                Id = NextStudentId++,
+                Id = 1,
                 Name = "Maria",
                 Email = "maria@gmail.com",
                 StudentCode = "S001",
@@ -53,7 +59,7 @@ namespace te1
 
             var craig = new Student
             {
-                Id = NextStudentId++,
+                Id = 2,
                 Name = "Craig",
                 Email = "craig@gmail.com",
                 StudentCode = "S002",

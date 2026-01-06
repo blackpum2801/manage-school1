@@ -14,7 +14,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="TeacherPage.cs">
+    <Compile Update="Views\Pages\TeacherPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
