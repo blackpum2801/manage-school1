@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using te1.Models;
 
-namespace te1.Views.Pages
+namespace te1.Views.Pages.Interfaces
 {
     public interface ITeacherView
     {

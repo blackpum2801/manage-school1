@@ -4,30 +4,55 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using te1.Controllers;
 using te1.Models;
-using te1.Services;
+using te1.Services.Interfaces;
+using te1.Views.Pages.Interfaces;
 
 namespace te1.Views.Pages
 {
     public partial class ClassPage : UserControl, IClassView
     {
-        private readonly ClassController _controller;
+        private ClassController _controller;
+        private readonly IClassService _classService;
+        private readonly ITeacherService _teacherService;
+        private readonly IStudentService _studentService;
 
-        public ClassPage()
+        public ClassPage(
+            IClassService classService,
+            ITeacherService teacherService,
+            IStudentService studentService)
         {
+            _classService = classService;
+            _teacherService = teacherService;
+            _studentService = studentService;
+
             InitializeComponent();
 
-            _controller = new ClassController(this, new SchoolService());
-
-            Load += (_, __) => _controller.Load();
-
-            btnCreateClass.Click += (_, __) => _controller.CreateClass();
-            btnDeleteClass.Click += (_, __) => _controller.DeleteClass();
-            btnAssignTeacher.Click += (_, __) => _controller.AssignHomeroomTeacher();
-            btnAddStudentToClass.Click += (_, __) => _controller.AddStudentToClass();
-
-            cboClass.SelectedIndexChanged += (_, __) => _controller.RefreshView();
+            SetupEventHandlers();
         }
 
+        private void SetupEventHandlers()
+        {
+            Load += ClassPage_Load;
+            btnCreateClass.Click += (_, __) => _controller?.CreateClass();
+            btnDeleteClass.Click += (_, __) => _controller?.DeleteClass();
+            btnAssignTeacher.Click += (_, __) => _controller?.AssignHomeroomTeacher();
+            btnAddStudentToClass.Click += (_, __) => _controller?.AddStudentToClass();
+
+            cboClass.SelectedIndexChanged += (_, __) => _controller?.RefreshView();
+        }
+
+        private void ClassPage_Load(object sender, EventArgs e)
+        {
+            _controller = new ClassController(
+                this,
+                _classService,
+                _teacherService,
+                _studentService);
+
+            _controller.Load();
+        }
+
+        // IClassView implementation
         public void BindClasses(BindingList<ClassRoom> classes)
         {
             cboClass.DataSource = classes;

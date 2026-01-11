@@ -2,27 +2,27 @@
 using System.ComponentModel;
 using System.Linq;
 using te1.Models;
-using te1.Services;
-using te1.Views.Pages;
+using te1.Services.Interfaces;
+using te1.Views.Pages.Interfaces;
 
 namespace te1.Controllers
 {
     public class StudentController
     {
         private readonly IStudentView _view;
-        private readonly SchoolService _service;
+        private readonly IStudentService _studentService;
 
         private BindingList<Student> _students = new();
 
-        public StudentController(IStudentView view, SchoolService service)
+        public StudentController(IStudentView view, IStudentService studentService)
         {
             _view = view;
-            _service = service;
+            _studentService = studentService;
         }
 
         public void Load()
         {
-            _students = new BindingList<Student>(_service.GetAllStudents().ToList());
+            _students = _studentService.GetStudentBinding();
             _view.BindStudents(_students);
         }
 
@@ -31,34 +31,21 @@ namespace te1.Controllers
             try
             {
                 if (!_view.TryGetNewStudent(out var student)) return;
-
-                var created = _service.AddStudent(student);
-
-                _students.Add(created);
+                var created = _studentService.AddStudent(student);
             }
             catch (Exception ex)
             {
                 _view.ShowError(ex.Message);
             }
         }
-
         public void Edit()
         {
             try
             {
                 var current = _view.GetSelectedStudent();
                 if (current is null) return;
-
                 if (!_view.TryEditStudent(current, out var updated)) return;
-
-                _service.UpdateStudent(current.Id, updated);
-
-                // update object đang bind
-                current.Name = updated.Name;
-                current.Email = updated.Email;
-                current.StudentCode = updated.StudentCode;
-                current.Major = updated.Major;
-
+                _studentService.UpdateStudent(current.Id, updated);
                 _view.RefreshCurrent();
             }
             catch (Exception ex)
@@ -66,7 +53,6 @@ namespace te1.Controllers
                 _view.ShowError(ex.Message);
             }
         }
-
         public void Delete()
         {
             try
@@ -80,13 +66,22 @@ namespace te1.Controllers
 
                 if (!_view.ConfirmDelete(current)) return;
 
-                _service.DeleteStudent(current.Id);
-                _students.Remove(current);
+                _studentService.DeleteStudent(current.Id);
             }
             catch (Exception ex)
             {
                 _view.ShowError(ex.Message);
             }
+        }
+        public System.Collections.Generic.List<Student> GetStudentsInClass(int classId)
+        {
+            return _studentService.GetStudentsInClass(classId);
+        }
+
+        public void RefreshStudents()
+        {
+            _students = _studentService.GetStudentBinding();
+            _view.BindStudents(_students);
         }
     }
 }

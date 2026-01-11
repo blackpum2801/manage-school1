@@ -2,27 +2,27 @@
 using System.ComponentModel;
 using System.Linq;
 using te1.Models;
-using te1.Services;
-using te1.Views.Pages;
+using te1.Services.Interfaces;
+using te1.Views.Pages.Interfaces;
 
 namespace te1.Controllers
 {
     public class TeacherController
     {
         private readonly ITeacherView _view;
-        private readonly SchoolService _service;
+        private readonly ITeacherService _teacherService;
 
         private BindingList<Teacher> _teachers = new();
 
-        public TeacherController(ITeacherView view, SchoolService service)
+        public TeacherController(ITeacherView view, ITeacherService teacherService)
         {
             _view = view;
-            _service = service;
+            _teacherService = teacherService;
         }
 
         public void Load()
         {
-            _teachers = new BindingList<Teacher>(_service.GetAllTeachers().ToList());
+            _teachers = _teacherService.GetTeacherBinding();
             _view.BindTeachers(_teachers);
         }
 
@@ -32,8 +32,7 @@ namespace te1.Controllers
             {
                 if (!_view.TryGetNewTeacher(out var teacher)) return;
 
-                var created = _service.AddTeacher(teacher); 
-                _teachers.Add(created);
+                var created = _teacherService.AddTeacher(teacher);
             }
             catch (Exception ex)
             {
@@ -50,14 +49,7 @@ namespace te1.Controllers
 
                 if (!_view.TryEditTeacher(current, out var updated)) return;
 
-                _service.UpdateTeacher(current.Id, updated);
-
-                current.Name = updated.Name;
-                current.Email = updated.Email;
-                current.TeacherCode = updated.TeacherCode;
-                current.Department = updated.Department;
-                current.Salary = updated.Salary;
-
+                _teacherService.UpdateTeacher(current.Id, updated);
                 _view.RefreshCurrent();
             }
             catch (Exception ex)
@@ -79,13 +71,17 @@ namespace te1.Controllers
 
                 if (!_view.ConfirmDelete(current)) return;
 
-                _service.DeleteTeacher(current.Id);
-                _teachers.Remove(current);
+                _teacherService.DeleteTeacher(current.Id);
             }
             catch (Exception ex)
             {
                 _view.ShowError(ex.Message);
             }
+        }
+        public void RefreshTeachers()
+        {
+            _teachers = _teacherService.GetTeacherBinding();
+            _view.BindTeachers(_teachers);
         }
     }
 }

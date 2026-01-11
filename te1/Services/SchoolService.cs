@@ -4,16 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using te1.Data;
 using te1.Models;
+using te1.Services.Interfaces;
 
 namespace te1.Services
 {
-    public class SchoolService
+    public class SchoolService : ISchoolService
     {
-        public BindingList<ClassRoom> GetClassBinding() => DataStore.Classes;
-        public BindingList<Teacher> GetTeacherBinding() => DataStore.Teachers;
+        // IStudentService implementation
         public BindingList<Student> GetStudentBinding() => DataStore.Students;
-
-        // STUDENTS 
 
         public List<Student> GetAllStudents()
             => DataStore.Students.ToList();
@@ -67,7 +65,15 @@ namespace te1.Services
                 throw new Exception("StudentCode đã tồn tại");
         }
 
-        // TEACHERS 
+        public List<Student> GetStudentsInClass(int classId)
+        {
+            return DataStore.Students
+                .Where(s => s.ClassRoomIds.Contains(classId))
+                .ToList();
+        }
+
+        // ITeacherService implementation
+        public BindingList<Teacher> GetTeacherBinding() => DataStore.Teachers;
 
         public List<Teacher> GetAllTeachers()
             => DataStore.Teachers.ToList();
@@ -122,21 +128,15 @@ namespace te1.Services
                 throw new Exception("TeacherCode đã tồn tại");
         }
 
-        // CLASSES
-
-        public List<Student> GetStudentsInClass(int classId)
-        {
-            return DataStore.Students
-                .Where(s => s.ClassRoomIds.Contains(classId))
-                .ToList();
-        }
-
         public string GetHomeroomTeacherName(ClassRoom cls)
         {
             if (!cls.HomeroomTeacherId.HasValue) return "(none)";
             var t = DataStore.Teachers.FirstOrDefault(x => x.Id == cls.HomeroomTeacherId.Value);
             return t?.Name ?? "(none)";
         }
+
+        // IClassService implementation
+        public BindingList<ClassRoom> GetClassBinding() => DataStore.Classes;
 
         public ClassRoom CreateClass(string name)
         {

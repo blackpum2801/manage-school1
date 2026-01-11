@@ -30,12 +30,10 @@ namespace te1.Views.Forms.Students
                 MessageBox.Show("Email không được để trống");
                 return;
             }
-
             Result.Name = txtName.Text.Trim();
             Result.Email = txtEmail.Text.Trim();
             Result.StudentCode = txtStudentCode.Text.Trim();
             Result.Major = txtMajor.Text.Trim();
-
             DialogResult = DialogResult.OK;
         }
     }

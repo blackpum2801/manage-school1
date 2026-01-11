@@ -1,31 +1,36 @@
 ﻿using System;
 using System.Linq;
 using te1.Models;
-using te1.Services;
-using te1.Views.Pages;
+using te1.Services.Interfaces;
+using te1.Views.Pages.Interfaces;
 
 namespace te1.Controllers
 {
     public class ClassController
     {
         private readonly IClassView _view;
-        private readonly SchoolService _service;
-
-        public ClassController(IClassView view, SchoolService service)
+        private readonly IClassService _classService;
+        private readonly ITeacherService _teacherService;
+        private readonly IStudentService _studentService;
+        public ClassController(
+            IClassView view,
+            IClassService classService,
+            ITeacherService teacherService,
+            IStudentService studentService)
         {
             _view = view;
-            _service = service;
+            _classService = classService;
+            _teacherService = teacherService;
+            _studentService = studentService;
         }
-
         public void Load()
         {
-            _view.BindClasses(_service.GetClassBinding());
-            _view.BindTeachers(_service.GetTeacherBinding());
-            _view.BindStudents(_service.GetStudentBinding());
+            _view.BindClasses(_classService.GetClassBinding());
+            _view.BindTeachers(_teacherService.GetTeacherBinding());
+            _view.BindStudents(_studentService.GetStudentBinding());
 
             RefreshView();
         }
-
         public void RefreshView()
         {
             var cls = _view.GetSelectedClass();
@@ -35,23 +40,19 @@ namespace te1.Controllers
                 _view.ShowHomeroom("GVCN: (none)");
                 return;
             }
-
-            var students = _service.GetStudentsInClass(cls.Id).ToList();
+            var students = _classService.GetStudentsInClass(cls.Id).ToList();
             _view.ShowStudentsInClass(students);
 
-            var homeroomName = _service.GetHomeroomTeacherName(cls);
+            var homeroomName = _classService.GetHomeroomTeacherName(cls);
             _view.ShowHomeroom($"GVCN: {homeroomName}");
         }
-
         public void CreateClass()
         {
             try
             {
                 var name = _view.GetNewClassName();
-                _service.CreateClass(name);
+                _classService.CreateClass(name);
                 _view.ClearNewClassName();
-
-                // DataSource đang bind BindingList => tự update
                 RefreshView();
             }
             catch (Exception ex)
@@ -73,7 +74,7 @@ namespace te1.Controllers
 
                 if (!ok) return;
 
-                _service.DeleteClass(cls.Id);
+                _classService.DeleteClass(cls.Id);
                 RefreshView();
             }
             catch (Exception ex)
@@ -90,7 +91,7 @@ namespace te1.Controllers
                 var teacher = _view.GetSelectedTeacher();
                 if (cls is null || teacher is null) return;
 
-                _service.AssignHomeroomTeacher(cls.Id, teacher.Id);
+                _classService.AssignHomeroomTeacher(cls.Id, teacher.Id);
                 RefreshView();
             }
             catch (Exception ex)
@@ -107,13 +108,24 @@ namespace te1.Controllers
                 var student = _view.GetSelectedStudent();
                 if (cls is null || student is null) return;
 
-                _service.AddStudentToClass(cls.Id, student.Id);
+                _classService.AddStudentToClass(cls.Id, student.Id);
                 RefreshView();
             }
             catch (Exception ex)
             {
                 _view.ShowError(ex.Message);
             }
+        }
+
+        public System.Collections.Generic.List<ClassRoom> GetAllClasses()
+        {
+            return _classService.GetClassBinding().ToList();
+        }
+
+        public ClassRoom GetClassById(int id)
+        {
+            return _classService.GetClassBinding()
+                .FirstOrDefault(c => c.Id == id);
         }
     }
 }
